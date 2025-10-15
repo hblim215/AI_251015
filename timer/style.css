@@ -1,18 +1,20 @@
 :root {
-  --bg-top: #f6f0ff;
-  --bg-bottom: #c7e8ff;
-  --card-top: #ffffff;
-  --card-bottom: #ffe8f7;
-  --accent: #ff9bd5;
-  --accent-dark: #e066b4;
-  --text-main: #3b3160;
-  --text-secondary: #615782;
-  --shadow: rgba(59, 49, 96, 0.18);
-  --map-border: #f5a2c7;
+  --bg-top: #0d1423;
+  --bg-bottom: #1c304f;
+  --bg-mid: rgba(123, 169, 255, 0.18);
+  --card-top: rgba(31, 51, 89, 0.9);
+  --card-bottom: rgba(21, 29, 46, 0.85);
+  --accent: #6bdcff;
+  --accent-strong: #3ba3ff;
+  --accent-soft: rgba(107, 220, 255, 0.18);
+  --text-main: #f5f8ff;
+  --text-secondary: rgba(236, 244, 255, 0.7);
+  --shadow: rgba(10, 17, 33, 0.5);
+  --map-border: rgba(255, 255, 255, 0.35);
   --day-dot: #ffd966;
   --night-dot: #8da4ff;
-  --font-display: "Comic Sans MS", "Segoe UI Rounded", "Trebuchet MS", sans-serif;
-  --font-body: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-display: "SUIT", "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+  --font-body: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 
 *,
@@ -30,19 +32,32 @@ body {
   padding: clamp(1.5rem, 4vw, 3rem);
   font-family: var(--font-body);
   color: var(--text-main);
-  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(90, 129, 255, 0.38) 0, transparent 42%),
+    radial-gradient(circle at 82% 12%, rgba(255, 121, 198, 0.25) 0, transparent 40%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
 }
 
-body::before {
+body::before,
+body::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.35) 0, transparent 40%),
-    radial-gradient(circle at 80% 15%, rgba(173, 216, 230, 0.4) 0, transparent 38%),
-    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.3) 0, transparent 42%);
   z-index: 0;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 20% 80%, rgba(107, 220, 255, 0.22) 0, transparent 45%),
+    radial-gradient(circle at 78% 74%, rgba(255, 182, 240, 0.2) 0, transparent 48%);
+}
+
+body::after {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+  background-size: 60px 60px;
+  mix-blend-mode: screen;
+  opacity: 0.4;
 }
 
 .app {
@@ -63,8 +78,22 @@ body::before {
 .app__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  letter-spacing: 0.04em;
+  font-size: clamp(1.8rem, 4vw, 2.9rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.app__title::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 24px rgba(107, 220, 255, 0.8);
 }
 
 .pill-button {
@@ -73,31 +102,69 @@ body::before {
   padding: 0.75rem 1.75rem;
   font-family: var(--font-display);
   font-size: 1rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--text-main);
-  background: linear-gradient(135deg, #ffd7ef 0%, #ffeec9 100%);
-  box-shadow: 0 12px 18px rgba(255, 155, 213, 0.25);
+  background:
+    linear-gradient(135deg, rgba(107, 220, 255, 0.35) 0%, rgba(59, 163, 255, 0.8) 100%),
+    rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 32px rgba(11, 20, 40, 0.4);
   cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 240ms ease;
 }
 
 .pill-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 24px rgba(255, 155, 213, 0.3);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 22px 40px rgba(16, 32, 64, 0.55);
+  background:
+    linear-gradient(135deg, rgba(107, 220, 255, 0.5) 0%, rgba(59, 163, 255, 0.92) 100%),
+    rgba(255, 255, 255, 0.12);
 }
 
 .pill-button:active {
   transform: translateY(0);
-  box-shadow: 0 8px 12px rgba(255, 155, 213, 0.2);
+  box-shadow: 0 12px 20px rgba(11, 20, 40, 0.35);
 }
 
+
 .clock-card {
+  position: relative;
   display: grid;
-  gap: 1.5rem;
-  padding: clamp(1.75rem, 4vw, 2.5rem);
-  border-radius: 32px;
-  background: linear-gradient(180deg, var(--card-top) 0%, var(--card-bottom) 100%);
-  box-shadow: 0 18px 36px var(--shadow);
+  gap: 1.75rem;
+  padding: clamp(2rem, 5vw, 2.8rem);
+  border-radius: 36px;
+  background:
+    linear-gradient(160deg, var(--card-top) 0%, var(--card-bottom) 100%),
+    rgba(18, 26, 40, 0.85);
+  box-shadow: 0 28px 45px var(--shadow);
+  overflow: hidden;
+}
+
+.clock-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(circle at 30% 20%, rgba(107, 220, 255, 0.22), transparent 58%),
+    radial-gradient(circle at 80% 65%, rgba(59, 163, 255, 0.18), transparent 60%);
+  filter: blur(0.5px);
+  z-index: 0;
+}
+
+.clock-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% -10%, rgba(107, 220, 255, 0.35), transparent 60%);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.clock-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .clock-card__top,
@@ -105,65 +172,104 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  font-size: clamp(0.88rem, 2.5vw, 1rem);
   color: var(--text-secondary);
+  letter-spacing: 0.08em;
 }
 
 .clock-card__label {
   margin: 0;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  font-size: 0.78rem;
+  color: rgba(245, 248, 255, 0.6);
 }
 
 .clock-card__city {
   font-family: var(--font-display);
-  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-size: clamp(1.45rem, 3.2vw, 1.8rem);
   color: var(--text-main);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .clock-card__offset,
 .clock-card__date {
   font-variant-numeric: tabular-nums;
+  color: rgba(245, 248, 255, 0.85);
+}
+
+.clock-card__offset {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(107, 220, 255, 0.12);
+  border: 1px solid rgba(107, 220, 255, 0.3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.clock-card__date {
+  letter-spacing: 0.12em;
 }
 
 .clock-display {
   display: grid;
-  gap: 0.75rem;
+  gap: 1.1rem;
   justify-items: center;
 }
 
 .clock-display__period {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.35rem);
-  padding: 0.4rem 1.25rem;
+  font-size: clamp(1rem, 2.6vw, 1.3rem);
+  padding: 0.45rem 1.4rem;
   border-radius: 999px;
-  background: rgba(255, 155, 213, 0.2);
-  color: var(--accent-dark);
-  letter-spacing: 0.16em;
+  background: rgba(107, 220, 255, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(107, 220, 255, 0.35);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 12px rgba(59, 163, 255, 0.35);
 }
 
 .clock-display__digits {
   display: flex;
-  align-items: flex-end;
-  gap: clamp(0.65rem, 2vw, 1.1rem);
+  align-items: stretch;
+  gap: clamp(0.7rem, 2.5vw, 1.25rem);
   font-family: var(--font-display);
 }
 
 .digit-group {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 0.25rem;
-  min-width: 90px;
+  gap: 0.35rem;
+  min-width: 96px;
+  padding: 1.25rem 0.9rem 1.05rem;
+  border-radius: 22px;
+  background: rgba(9, 15, 26, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 28px rgba(7, 14, 29, 0.45);
+  backdrop-filter: blur(24px);
+}
+
+.digit-group::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 68%);
+  pointer-events: none;
 }
 
 .digit-value {
-  font-size: clamp(2.75rem, 8vw, 4.5rem);
+  font-size: clamp(2.8rem, 8vw, 4.6rem);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
   color: var(--text-main);
-  transition: transform 200ms ease;
+  text-shadow: 0 0 24px rgba(107, 220, 255, 0.3);
+  transition: transform 200ms ease, color 200ms ease, text-shadow 200ms ease;
 }
 
 .digit-value--millis {
@@ -171,42 +277,53 @@ body::before {
 }
 
 .digit-label {
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: rgba(236, 244, 255, 0.65);
 }
 
 .digit-colon {
-  font-size: clamp(2.5rem, 7vw, 4rem);
-  color: var(--accent-dark);
-  transform: translateY(-0.3rem);
+  font-size: clamp(2.4rem, 7vw, 3.8rem);
+  color: rgba(107, 220, 255, 0.55);
+  align-self: center;
+  transform: translateY(0);
+  filter: drop-shadow(0 0 14px rgba(107, 220, 255, 0.6));
 }
 
 .clock-display__millis {
-  display: flex;
-  gap: 0.75rem;
+  display: inline-flex;
+  gap: 0.65rem;
   align-items: baseline;
   font-family: var(--font-display);
+  padding: 0.55rem 1rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(9, 15, 26, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 24px rgba(7, 14, 29, 0.35);
 }
 
 .digit-group.is-animating .digit-value,
 .clock-display__millis.is-animating .digit-value {
-  animation: pop 360ms ease;
+  animation: pulse-glow 420ms ease;
 }
 
-@keyframes pop {
+@keyframes pulse-glow {
   0% {
     transform: scale(1);
+    text-shadow: 0 0 24px rgba(107, 220, 255, 0.3);
   }
   35% {
-    transform: scale(1.2);
+    transform: scale(1.12);
+    text-shadow: 0 0 36px rgba(107, 220, 255, 0.55);
   }
   65% {
-    transform: scale(0.94);
+    transform: scale(0.96);
+    text-shadow: 0 0 18px rgba(107, 220, 255, 0.3);
   }
   100% {
     transform: scale(1);
+    text-shadow: 0 0 24px rgba(107, 220, 255, 0.3);
   }
 }
 
@@ -223,20 +340,23 @@ body::before {
 .map-section__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-main);
 }
 
 .map-section__subtitle {
   margin: 0;
   font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-  color: var(--text-secondary);
+  color: rgba(236, 244, 255, 0.65);
 }
 
 .map-section__legend {
   display: flex;
   gap: 1.25rem;
   font-size: 0.95rem;
-  color: var(--text-secondary);
+  color: rgba(236, 244, 255, 0.7);
 }
 
 .legend-item {
@@ -250,7 +370,7 @@ body::before {
   height: 16px;
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0 2px 6px rgba(59, 49, 96, 0.15);
+  box-shadow: 0 6px 14px rgba(7, 14, 29, 0.35);
 }
 
 .legend-dot--day {
@@ -265,13 +385,15 @@ body::before {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 16px 32px rgba(59, 49, 96, 0.15);
+  box-shadow: 0 30px 55px rgba(7, 14, 29, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .world-map {
   width: 100%;
   height: auto;
   display: block;
+  filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.35));
 }
 
 .map-continents {
@@ -280,6 +402,7 @@ body::before {
 
 .map-clouds ellipse {
   animation: cloudDrift 16s linear infinite;
+  filter: drop-shadow(0 6px 12px rgba(255, 255, 255, 0.4));
 }
 
 @keyframes gentleFloat {
@@ -330,8 +453,8 @@ body::before {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 10px 20px rgba(59, 49, 96, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 12px 24px rgba(7, 14, 29, 0.5);
   position: relative;
   overflow: hidden;
 }
@@ -340,15 +463,15 @@ body::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
 }
 
 .map-marker--day .map-marker__dot {
-  background: linear-gradient(145deg, #ffe79a, #ffc163);
+  background: linear-gradient(145deg, #ffd77f, #ffb347);
 }
 
 .map-marker--night .map-marker__dot {
-  background: linear-gradient(145deg, #9ea8ff, #6c75d7);
+  background: linear-gradient(145deg, #86a4ff, #4f5dd4);
 }
 
 .map-marker__label {
@@ -357,14 +480,16 @@ body::before {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 12px rgba(59, 49, 96, 0.15);
+  background: rgba(12, 20, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 24px rgba(7, 14, 29, 0.4);
   white-space: nowrap;
 }
 
 .map-marker.is-active .map-marker__label {
-  background: var(--accent);
-  color: #ffffff;
+  background: linear-gradient(135deg, rgba(107, 220, 255, 0.85), rgba(59, 163, 255, 0.95));
+  color: #0b1528;
+  border-color: transparent;
 }
 
 .map-marker__label::after {
