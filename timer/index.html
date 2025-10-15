@@ -85,20 +85,24 @@
           >
             <defs>
               <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#c9f1ff"></stop>
-                <stop offset="100%" stop-color="#9bd0ff"></stop>
+                <stop offset="0%" stop-color="#132038"></stop>
+                <stop offset="100%" stop-color="#253a65"></stop>
               </linearGradient>
               <radialGradient id="continentGradient" cx="50%" cy="50%" r="75%">
-                <stop offset="0%" stop-color="#fff3af"></stop>
-                <stop offset="100%" stop-color="#f7c9de"></stop>
+                <stop offset="0%" stop-color="#8fe9ff"></stop>
+                <stop offset="100%" stop-color="#5578ff"></stop>
+              </radialGradient>
+              <radialGradient id="continentGlow" cx="50%" cy="50%" r="120%">
+                <stop offset="0%" stop-color="rgba(255, 255, 255, 0.4)"></stop>
+                <stop offset="80%" stop-color="rgba(255, 255, 255, 0)"></stop>
               </radialGradient>
             </defs>
             <rect width="800" height="420" fill="url(#oceanGradient)"></rect>
             <g
               class="map-continents"
               fill="url(#continentGradient)"
-              stroke="#f5a2c7"
-              stroke-width="2"
+              stroke="rgba(143, 233, 255, 0.55)"
+              stroke-width="1.5"
               stroke-linejoin="round"
             >
               <path
@@ -126,7 +130,14 @@
               <ellipse cx="520" cy="80" rx="45" ry="16"></ellipse>
               <ellipse cx="560" cy="80" rx="35" ry="12"></ellipse>
               <ellipse cx="360" cy="40" rx="30" ry="10"></ellipse>
+              <ellipse cx="640" cy="180" rx="26" ry="9"></ellipse>
             </g>
+            <rect
+              width="800"
+              height="420"
+              fill="url(#continentGlow)"
+              opacity="0.45"
+            ></rect>
           </svg>
 
           <div
