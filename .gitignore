@@ -1,0 +1,4 @@
+car_picker/data/
+*.pyc
+__pycache__/
+.streamlit/
