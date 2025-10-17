@@ -6,6 +6,7 @@ import sys
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from collections import Counter
 
 import pandas as pd
 import requests
@@ -141,6 +142,121 @@ def convert_value(value: Any) -> Any:
     return value
 
 
+def inject_dashboard_styles() -> None:
+    st.markdown(
+        """
+        <style>
+        .metric-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 12px 0 24px 0;
+        }
+        .metric-card {
+            flex: 1 1 200px;
+            padding: 18px 20px;
+            border-radius: 20px;
+            color: #ffffff;
+            box-shadow: 0 12px 24px rgba(14, 27, 71, 0.18);
+            backdrop-filter: blur(6px);
+        }
+        .metric-card h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+        .metric-card span {
+            display: block;
+            margin-top: 6px;
+            font-size: 14px;
+            letter-spacing: 0.4px;
+            opacity: 0.82;
+        }
+        .metric-total {
+            background: linear-gradient(135deg, #1e2a56, #2f4a7d);
+        }
+        .metric-error {
+            background: linear-gradient(135deg, #ff5c7a, #ff7b5c);
+        }
+        .metric-warning {
+            background: linear-gradient(135deg, #f8b133, #f6c85c);
+        }
+        .metric-info {
+            background: linear-gradient(135deg, #5f8dff, #67c4ff);
+        }
+        .finding-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 22px 24px;
+            margin-bottom: 18px;
+            border: 1px solid #eef1f8;
+            box-shadow: 0 10px 20px rgba(20, 33, 61, 0.1);
+        }
+        .finding-card h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e2a56;
+        }
+        .finding-card p {
+            margin: 4px 0 0 0;
+            color: #4d5875;
+            font-size: 14px;
+        }
+        .finding-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: #eef1f8;
+            color: #1e2a56;
+        }
+        .badge-error { background: rgba(255, 92, 122, 0.12); color: #ff3364; }
+        .badge-warning { background: rgba(248, 195, 50, 0.16); color: #c98700; }
+        .badge-info { background: rgba(96, 182, 255, 0.14); color: #2c7be5; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_summary(findings: List[Dict[str, Any]]) -> None:
+    counts = Counter(finding.get("severity", "info") for finding in findings)
+    total = len(findings)
+    st.markdown(
+        f"""
+        <div class="metric-row">
+            <div class="metric-card metric-total">
+                <h2>{total}</h2>
+                <span>전체 검토 항목</span>
+            </div>
+            <div class="metric-card metric-error">
+                <h2>{counts.get('error', 0)}</h2>
+                <span>심각 (Error)</span>
+            </div>
+            <div class="metric-card metric-warning">
+                <h2>{counts.get('warning', 0)}</h2>
+                <span>주의 (Warning)</span>
+            </div>
+            <div class="metric-card metric-info">
+                <h2>{counts.get('info', 0)}</h2>
+                <span>알림 (Info)</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def load_corp_form_payload() -> Optional[Dict[str, Any]]:
     uploaded = st.sidebar.file_uploader("HAR 파일 업로드", type=["har", "json"])
     if not uploaded:
@@ -198,38 +314,51 @@ def render_findings(findings: List[Dict[str, Any]]) -> None:
     for finding in findings:
         severity = finding.get("severity", "info")
         icon = ICON_BY_SEVERITY.get(severity, "ℹ")
-        st.markdown(f"### {icon} {finding.get('message', '검토 결과')}")
-        st.caption(f"규칙 ID: `{finding.get('rule_id')}` · 심각도: {severity}")
+        badge_class = f"badge badge-{severity}"
+        st.markdown(
+            f"""
+            <div class="finding-card">
+                <div class="finding-meta">
+                    <span>{icon}</span>
+                    <span class="{badge_class}">{severity.upper()}</span>
+                    <span class="badge">{finding.get('rule_id')}</span>
+                </div>
+                <h3>{finding.get('message', '검토 결과')}</h3>
+            """,
+            unsafe_allow_html=True,
+        )
         details = finding.get("details") or []
         if details:
-            with st.expander("세부 정보"):
-                for detail in details:
-                    field = detail.get("field") or "항목"
-                    message = detail.get("message")
-                    context = detail.get("context")
-                    st.write(f"- **{field}**: {message}")
-                    if context:
-                        st.caption(context)
+            detail_lines = []
+            for detail in details:
+                field = detail.get("field") or "항목"
+                message = detail.get("message", "")
+                context = f" ({detail.get('context')})" if detail.get("context") else ""
+                detail_lines.append(f"<li><strong>{field}</strong> {message}{context}</li>")
+            st.markdown("<ul>" + "".join(detail_lines) + "</ul>", unsafe_allow_html=True)
         ref = finding.get("ref") or {}
-        with st.expander("근거 문서", expanded=False):
-            st.write(f"문서: {ref.get('doc_id', 'N/A')}")
-            if ref.get("effective_date"):
-                st.write(f"시행일: {ref['effective_date']}")
-            if ref.get("page"):
-                st.write(f"페이지: {ref['page']}")
-            if ref.get("snippet"):
-                st.markdown(f"> {ref['snippet']}")
-            if ref.get("source_path"):
-                st.caption(f"Source: {ref['source_path']}")
-            image_path = ref.get("image_path")
-            if image_path:
-                image_file = ROOT / image_path
-                if image_file.exists():
-                    st.image(str(image_file), caption="PDF 근거 페이지", use_container_width=True)
+        ref_lines = []
+        if ref.get("doc_id"):
+            ref_lines.append(f"문서: <strong>{ref['doc_id']}</strong>")
+        if ref.get("effective_date"):
+            ref_lines.append(f"시행일: {ref['effective_date']}")
+        if ref.get("page"):
+            ref_lines.append(f"페이지: {ref['page']}")
+        if ref_lines:
+            st.markdown("<p>" + " · ".join(ref_lines) + "</p>", unsafe_allow_html=True)
+        if ref.get("snippet"):
+            st.markdown(f"<blockquote>{ref['snippet']}</blockquote>", unsafe_allow_html=True)
+        image_path = ref.get("image_path")
+        if image_path:
+            image_file = ROOT / image_path
+            if image_file.exists():
+                st.image(str(image_file), caption="PDF 근거 페이지", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def main() -> None:
     st.set_page_config(page_title="지출결의서 사전 검토 시스템", layout="wide")
+    inject_dashboard_styles()
     if PLACEHOLDER_IMAGE.exists():
         st.image(str(PLACEHOLDER_IMAGE), width=900)
     st.title("지출결의서 사전 검토 시스템")
@@ -275,8 +404,11 @@ def main() -> None:
             with st.spinner("사전 검토를 진행 중입니다..."):
                 result = call_precheck(payload)
             if result:
-                st.success(f"사전 검토 결과: {result.get('status')}")
-                render_findings(result.get("findings", []))
+                findings = result.get("findings", [])
+                st.success(f"사전 검토 결과: {result.get('status')} (총 {len(findings)}건)")
+                if findings:
+                    render_summary(findings)
+                render_findings(findings)
 
 
 if __name__ == "__main__":
