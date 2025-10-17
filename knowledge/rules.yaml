@@ -1,0 +1,103 @@
+- id: closing_2025_09_submission_deadline
+  description: "2025년 9월 귀속 경비는 2025-10-01 이전에 작성 완료해야 합니다."
+  severity: error
+  applies:
+    accrual_month:
+      - "2025-09"
+  checks:
+    request_date_lte:
+      field: request_date
+      value: "2025-10-01"
+      message: "귀속 월 마감 기한(10/1) 이후에 작성된 결의서는 지급되지 않습니다."
+  ref:
+    doc_id: bulletin/2025-09-finance-close
+    clause: paragraph-3
+
+- id: closing_2025_09_pay_request_deadline
+  description: "2025년 9월 법인카드 경비의 지급요청일은 2025-10-15 이전이어야 합니다."
+  severity: warning
+  applies:
+    accrual_month:
+      - "2025-09"
+  checks:
+    request_date_lte:
+      field: pay_request_date
+      value: "2025-10-15"
+      message: "10월 지급 일정(10/15)을 넘기면 지급 지연 및 반려 대상입니다."
+  ref:
+    doc_id: bulletin/2025-09-finance-close
+    clause: paragraph-6
+
+- id: overtime_meal_cap_10000
+  description: "야근 식대는 1회 10,000원 한도입니다."
+  severity: error
+  applies:
+    form_type:
+      - card_expense
+      - trip_expense
+  checks:
+    per_occurrence_cap:
+      item_filter:
+        category:
+          regex: "야근식대"
+      field: amount_total
+      limit: 10000
+      message: "야근 식대 항목이 10,000원 한도를 초과했습니다."
+  ref:
+    doc_id: pdf/2025-v1
+    clause: page-2-segment-1
+
+- id: overtime_meal_timesheet_attachment
+  description: "야근/연장근로 식대는 근태·야근 증빙을 첨부해야 합니다."
+  severity: error
+  applies:
+    form_type:
+      - card_expense
+      - trip_expense
+  checks:
+    conditional_required_attachments:
+      item_filter:
+        category:
+          regex: "식대"
+      types:
+        - timesheet_proof
+      message: "야근 식대 증빙으로 근태기록(타임시트)을 첨부하세요."
+  ref:
+    doc_id: pdf/2025-v1
+    clause: page-2-segment-1
+
+- id: overtime_commute_receipt_attachment
+  description: "야근 교통비는 교통 영수증(또는 탑승 내역) 첨부가 필요합니다."
+  severity: warning
+  applies:
+    form_type:
+      - card_expense
+      - trip_expense
+  checks:
+    conditional_required_attachments:
+      item_filter:
+        category:
+          regex: "교통비"
+      types:
+        - commute_receipt
+      message: "야근 교통비 증빙(교통 영수증 또는 탑승내역)을 첨부하세요."
+  ref:
+    doc_id: pdf/2025-v1
+    clause: page-3-segment-1
+
+- id: dispatch_rent_cap
+  description: "파견 숙소 비용은 월 500,000원 한도를 초과할 수 없습니다."
+  severity: error
+  applies:
+    form_type:
+      - dispatch_allowance
+  checks:
+    per_occurrence_cap:
+      item_filter:
+        category: lodging_rent
+      field: amount_total
+      limit: 500000
+      message: "파견 숙소 월 한도(500,000원)를 초과했습니다."
+  ref:
+    doc_id: pdf/20231106
+    clause: page-1-segment-1

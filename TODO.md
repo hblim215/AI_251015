@@ -1,0 +1,9 @@
+- [ ] 게시판 API 연동 설계: 재무톡톡 인증/토큰 흐름 문서화
+- [ ] PyMuPDF 추출 튜닝: 표 구조 파싱 및 항목 단위 스니펫 분리
+- [ ] DOCX 파서 추가: 규정/지침 Word 파일 테스트 케이스 확보
+- [ ] 규칙 DSL 확장: `date_diff_gte`, `sum_cap`, `attachment_required_if` 연산 추가
+- [ ] `/documents` API 구현: doc_id 기반 최신 스니펫 검색 및 UI 연동
+- [ ] Frontend 다국어 지원(한국어/영어 토글) 및 접근성 점검
+- [ ] 배치 업로드(Excel) 지원용 API 스펙 정의
+- [ ] LLM 기반 설명 생성 PoC (검토 결과 → 자연어 가이드)
+- [ ] HAR 외 HTML/직접 API 호출 방식 지원 범위 확장

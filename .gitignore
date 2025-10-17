@@ -1,4 +1,10 @@
 car_picker/data/
+docs/source_pdfs/
+docs/exp_data/
+docs/screenshots/
+knowledge/snippets/
+knowledge/kb.jsonl
+knowledge/document_registry.json
 *.pyc
 __pycache__/
 .streamlit/
